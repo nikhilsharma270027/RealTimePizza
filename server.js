@@ -10,7 +10,9 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const flash = require('express-flash');
 const MongoDbStore = require('connect-mongo');
+const exp = require('constants');
 //MongoDbStore()
+const passport = require('passport')
 
 // Database Connection
 
@@ -25,6 +27,13 @@ mongoose.connect(process.env.MONGO_CONNECTION_URL)
 connection.once('open', () => {
 console.log('Database connected... ');
 })
+
+// // password config
+// const passportInit = require('./app/config/passport')
+// passportInit(passport)
+// app.use(passport.initialize())
+// app.use(passport.session())
+// //passport works with the help of session
 
 // session store
 // let mongoStore = new MongoDbStore({
@@ -47,13 +56,23 @@ app.use(session({
 //using as a middleware
 app.use(flash())
 
+// password config
+const passportInit = require('./app/config/passport')
+passportInit(passport)
+app.use(passport.initialize())
+app.use(passport.session())
+//passport works with the help of session
+
+
 // Asset
 app.use(express.static('public'));
+app.use(express.urlencoded({ extended: false}))
 app.use(express.json())
 
 // Gobal Middleware
 app.use((req,res, next) => {
     res.locals.session = req.session
+    res.locals.user = req.user
     next() 
 })
 
