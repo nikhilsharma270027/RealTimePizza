@@ -87,7 +87,10 @@ app.use(expressLayout)
 app.set('views', path.join(__dirname,'/resources/views'))
 app.set('view engine', 'ejs')
                                     //part5 15:00
-require('./routes/web')(app);       //part 6
+require('./routes/web')(app);       //part 6  all routes are in this
+app.use((req,res) => {
+    res.status(404).send('<h1>404, Page not found</h1>')
+})
 
 const server = app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`);
