@@ -4,7 +4,7 @@
 
     <div class="order container mx-auto xl:w-1/2">
         <div class="flex items-center border-b border-gray-300 pb-6">
-            <img src="/img/cart-black.png" alt="" />
+            <img src="/img/cart.png" alt="" />
             <h1 class="font-bold ml-4 text-2xl">Order summary</h1>
         </div>
         <div class="pizza-list">
@@ -14,10 +14,10 @@
                 <img class="w-24" src="/img/<%= pizza.item.image %>" alt="" />
                 <div class="flex-1 ml-4">
                     <h1><%= pizza.item.name %></h1>
-                    <span><%= pizza.item.size %></span>
+                    <span><%= pizza.item.company %></span>
                 </div>
-                <span class="flex-1"><%= pizza.qty %> Pcs</span>
-                <span class="text-bold text-lg">₹ <%= pizza.item.price * pizza.qty %></span>
+                <span class="flex-1"><%= pizza.qty %> Device</span>
+                <span class="text-bold text-lg">Model: <%= pizza.model %>2022</span>
             </div>
           <% } %>      
 
@@ -25,8 +25,8 @@
         <hr>
         <div class="text-right py-4">
             <div>
-                <span class="text-lg font-bold">Total Amount:</span>
-                <span class="amount text-2xl font-bold ml-2">₹<%= session.cart.totalPrice %></span>
+                <span class="text-lg font-bold">Total Devices:</span>
+                <span class="amount text-2xl font-bold ml-2"><%= session.cart.totalQty %></span>
             </div>
             <% if(user){ %>
             <div>
