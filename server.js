@@ -13,6 +13,7 @@ const MongoDbStore = require('connect-mongo');
 const exp = require('constants');
 //MongoDbStore()
 const passport = require('passport')
+const Emitter = require('events')
 
 // Database Connection
 
@@ -41,6 +42,10 @@ console.log('Database connected... ');
 //     collection: 'sessions'
 // })    
 
+// Event Emitter
+const eventEmitter = new Emitter()
+app.set('eventEmitter', eventEmitter)
+
 // session configs
 app.use(session({
     secret: process.env.COOKIE_SECRET,
@@ -57,7 +62,8 @@ app.use(session({
 app.use(flash())
 
 // password config
-const passportInit = require('./app/config/passport')
+const passportInit = require('./app/config/passport');
+const order = require('./app/models/order');
 passportInit(passport)
 app.use(passport.initialize())
 app.use(passport.session())
@@ -81,8 +87,35 @@ app.use(expressLayout)
 app.set('views', path.join(__dirname,'/resources/views'))
 app.set('view engine', 'ejs')
                                     //part5 15:00
-require('./routes/web')(app);       //part 6
+require('./routes/web')(app);       //part 6  all routes are in this
+app.use((req,res) => {
+    res.status(404).send('<h1>404, Page not found</h1>')
+})
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`);
 });
+
+
+
+// Socket
+
+const io = require('socket.io')(server)
+io.on('connection', (socket) => {
+    // Join
+    //console.log(socket.id)
+    socket.on('join', (orderId) => {
+        //console.log(orderId)
+        socket.join(orderId) // room will be crated
+    })
+})
+
+
+eventEmitter.on('orderUpdated', (data) => {
+    io.to(`order_${data.id}`).emit('orderUpdated', data)
+})
+
+
+eventEmitter.on('orderPlaced', (data) => {
+    io.to('adminRoom').emit('orderPlaced', data)
+})
